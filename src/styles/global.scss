@@ -1,0 +1,114 @@
+// 全局颜色配置
+$--color-main: #2AF4DA;
+$--color-main-fz: #008CC6;
+$--color-main-jb: linear-gradient(0deg, #008CC6 0%, #2AF4DA 100%);
+
+// 强调蓝色
+$--color-primary: #00D3FE;
+// 警告
+$--color-danger: #F75166;
+// 警示
+$--color-warning: #FF8C2E;
+// 成功
+$--color-success: #49C04B;
+// 强调
+$--color-stress: #FFD36C;
+// 额外
+$--color-extra: #117E7C;
+// 进度条
+$--color-progress: #00b79e;
+
+$--color-board-back: rgba(0, 0, 0, 0.36);
+//tab 按键组
+@function linear-gradient-main-transparency($c1,$c2) {
+  @return linear-gradient(180deg, rgba(0, 140, 198, $c1) 0%, rgba(42, 244, 218, $c2) 100%);
+}
+//通用函数
+@function color-opacity($color,$opacity) {
+  //scss内置
+  @return transparentize($color, $opacity);
+  //@return rgba($color, $opacity);
+}
+//背景
+@function --color-bg($c1) {
+  @return rgba(17, 126, 124, $c1);
+}
+
+//阴影
+$--bg-main-header-shadow: linear-gradient(0deg, rgba(86, 102, 107, 0.00) 0%, rgba(12, 21, 23, 0.70) 100%);
+$--bg-main-border-shadow: linear-gradient(270deg, rgba(7, 15, 27, 0.80) 0%, rgba(7, 17, 30, 0.00) 100%);
+
+//主页渐变线
+$--main-board-line: linear-gradient(270deg, rgba(28, 210, 211, 0.00) 0%, #3CEBEB 100%);
+//主页
+$--main-board-background: #0d0f0f36;
+//主页project view
+$--main-board-project-view: rgba(216, 216, 216, 0.10);
+//btn渐变色
+$--color-btn-bg: linear-gradient(0deg, rgba(42, 244, 218, 0.7) 0%, #008CC6 100%);
+//主页问题列表
+$--color-main-question-list: linear-gradient(180deg, rgba(44, 244, 218, 0.5) 0%, rgba(0, 140, 198, 0.5) 100%);
+//poi-windows 界面 按钮背景
+$--color-poi-wa-btn: linear-gradient(0deg, rgba(42, 244, 218, 0.7) 0%, rgba(0, 140, 198, 0.04) 100%);
+//弹窗背景
+$--color-dialog-bg: rgba(8, 18, 18, 0.80);
+//项目详情页cell 背景
+$--color-site-detail-cell-bg: #1C232460;
+
+
+//导出属性 不要改！！！
+:export {
+  colorMain:$--color-main;
+  // 主色
+  colorPrimary: $--color-primary;
+  // 警告
+  colorDanger: $--color-danger;
+  // 警示
+  colorWarning: $--color-warning;
+  // 成功
+  colorSuccess: $--color-success;
+  // 强调
+  colorStress: $--color-stress;
+  // 额外
+  colorExtra:$--color-extra;
+  // 额外
+  colorProgress:$--color-progress;
+}
+
+//竖直居中样式
+@mixin centerVertical() {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+//水平居中样式
+@mixin centerHorizontal() {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+//数字字体
+@mixin numFontFamily() {
+  font-family: TG-TYPE-Regular;
+}
+@mixin numFontFamilyBold() {
+  font-family: TG-TYPE-Bold;
+}
+
+
+.flex-flat {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+
+.word-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

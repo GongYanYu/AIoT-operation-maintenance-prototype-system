@@ -1,0 +1,223 @@
+body {
+    height: 100%;
+    margin: 0;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+    font-weight: 500;
+}
+
+html {
+    margin: 0;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+#app {
+    height: 100%;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+img{
+    line-height: 0;
+}
+
+.no-padding {
+    padding: 0px !important;
+}
+
+.padding-content {
+    padding: 4px 0;
+}
+
+a:focus,
+a:active {
+    outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+}
+
+div:focus {
+    outline: none;
+}
+
+.fr {
+    float: right;
+}
+
+.fl {
+    float: left;
+}
+
+.pr-5 {
+    padding-right: 5px;
+}
+
+.pl-5 {
+    padding-left: 5px;
+}
+
+.block {
+    display: block;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.inlineBlock {
+    display: block;
+}
+
+.clearfix {
+    &:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
+}
+
+//--------------以下为全局样式--------------------
+//点击指针
+.pointer{
+  cursor: pointer;
+}
+
+// 美化滚动条
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+}
+::-webkit-scrollbar-track {
+  width: 6px;
+  background: rgba(#101F1C, 0.1);
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+  cursor: pointer;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(144,147,153,.5);
+  background-clip: padding-box;
+  min-height: 28px;
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+  transition: background-color .3s;
+  cursor: pointer;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(144,147,153,.3);
+  cursor: pointer;
+}
+//美化el-carousel
+//轮播图指示器样式
+.el-carousel__indicator--horizontal {
+  padding: 4px;
+  margin-top: 8px;
+}
+.el-carousel__indicators--horizontal {
+  //可以在这里修改总体位置
+  .el-carousel__indicator--horizontal button {
+    width: 8px;
+    height: 8px;
+    margin-top: 14px;
+    background: #ffffff ;
+    border-radius: 50%;
+  }
+  .el-carousel__indicator--horizontal.is-active button {
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    margin-top: 14px;
+  }
+}
+
+//a b c 颜色
+.color-a{color: $--color-danger;}
+.color-b{color: $--color-stress;}
+.color-c{color: $--color-primary;}
+
+
+//数字字体
+.number-font{font-family: TG-TYPE-Regular;}
+.number-font-bold{font-family: TG-TYPE-Bold;}
+
+//datepicker
+.el-picker-panel{
+  background: $--color-extra !important;
+  border-radius: 20px;
+  color: white !important;
+  border: 1px solid #C7FEFB;
+}
+//时间选择内容头部
+.el-date-picker__header--bordered{
+  border-bottom: 1px solid white !important;
+}
+// 左右箭头
+.el-picker-panel__icon-btn, .el-date-picker__header-label{
+  color:white !important;
+}
+//年，月
+.el-year-table td .cell,.el-month-table td .cell{
+  color:white;
+  font-size: 14px;
+}
+
+//重绘 当前月样式
+.el-year-table td.today .cell,.el-month-table td.today .cell{
+  color: #fff !important;
+  background-color:transparent !important;
+}
+
+//年月选中/滑过样式
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell,
+.el-month-table td .cell:hover, .el-month-table td.current:not(.disabled) .cell{
+  color: #fff !important;
+  background-color: $--color-primary !important;
+  border-radius: 4px !important;
+  font-size: 15px !important;
+  width: 60px;
+  text-align: center;
+}
+
+//滚动 选中效果
+.auto-scroll-cell-checked{
+  background:  linear-gradient-main-transparency(0.5, 0.5);
+  //padding:0 3px 0 3px;
+  border-radius: 7px;
+}
+//滚动 hover效果
+.auto-scroll-cell-hover{
+  background: #FFFFFF30;
+  //padding:0 3px 0 3px;
+  border-radius: 7px;
+}
+
+.number-size{
+  font-size: 16px;
+}
+
+hr{
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  margin: 3px 10px;
+}
