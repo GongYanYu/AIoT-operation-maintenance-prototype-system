@@ -1,6 +1,7 @@
 <template>
   <el-dialog v-if="!!entity" :title="entity.name+'异常详情'" :append-to-body="true" top="8vh"
-             :visible.sync="isVisible" custom-class="customClass" :modal-append-to-body="false" :modal="true">
+             :visible.sync="isVisible" custom-class="customClass" :modal-append-to-body="false" :modal="true"
+  >
     <abnormal-prediction :entity="entity" v-if="showPredict==='predict'"/>
     <root-cause-localization :entity="entity" v-else/>
   </el-dialog>
@@ -31,10 +32,15 @@ export default {
   },
   data() {
     return{
-      //isVisible:true,
+    }
+  },
+  watch:{
+    entity(v){
     }
   },
   created() {
+  },
+  methods:{
   }
 }
 </script>

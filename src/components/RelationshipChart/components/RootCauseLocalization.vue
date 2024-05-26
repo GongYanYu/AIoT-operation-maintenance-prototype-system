@@ -10,14 +10,14 @@
         <main-title title="状态总览" use-size="2"></main-title>
         <div class="lower-inner">
           <div class="flex-flat">
-            <icon-number label="CPU使用率" :value="1.5" unit="%" icon="zc"/>
-            <icon-number label="CPU请求率" :value="90.1" unit="%" icon="tq"/>
+            <icon-number label="CPU使用率" :value="overview()" unit="%" icon="zc"/>
+            <icon-number label="CPU请求率" :value="overview()" unit="%" icon="tq"/>
           </div>
           <div class="flex-flat">
-            <icon-number label="总内存" :value="8" unit="GiB" icon="wlldf"/>
-            <icon-number label="使用量" :value="5.5" unit="GiB" icon="wlldf"/>
+            <icon-number label="总内存" :value="overview()" unit="GiB" icon="wlldf"/>
+            <icon-number label="使用量" :value="overview()" unit="GiB" icon="wlldf"/>
           </div>
-          <liquid-number style="height: 70px; " :size="7" fill-str="0" :show-data="rootId">
+          <liquid-number style="height: 70px; " :size="rootId?rootId.length:0" fill-str="0" :show-data="rootId">
             <div>根因定位ID</div>
           </liquid-number>
           <div class="flex-flat">
@@ -47,7 +47,7 @@
       </div>
       <div class="right">
         <main-title title="实时纺织转速监控" use-size="2"></main-title>
-        <device-chart class="lower-inner"/>
+        <device-chart class="lower-inner" :show-data="monitor"/>
       </div>
     </div>
     <main-title title="根因定位关系图" use-size="3"></main-title>
@@ -70,6 +70,9 @@ import LiquidNumber from '@/components/LiquidNumber/index.vue'
 import RootPointChart from '@/components/RootPointChart/index.vue'
 import DeviceChart from '@/components/DeviceChart/index.vue'
 
+import { mapGetters } from 'vuex'
+import { getListNextVFunc } from '@/utils/gyy-utils'
+import AbnormalApi from '@/api/abnormal'
 export default {
   name: 'RootCauseLocalization',
   components: {
@@ -92,7 +95,12 @@ export default {
       topListTitle: { value1: '序列ID', value2: '节点名称', value3: '异常问题', progress: null, colorList: [] },
       dataList:[],
       rootId:'',
+      overview:()=>'-',
+      monitor: [],
     }
+  },
+  computed:{
+    ...mapGetters(['nodeList'])
   },
   props: {
     entity: {
@@ -103,27 +111,41 @@ export default {
     }
   },
   watch: {
-    isVisible() {
+    isVisible:{
+      handler(v) {
+        v&&this.initData()
+      },
+      immediate:true
     }
   },
   created() {
-    this.initData()
   },
   methods: {
     initData() {
-      let i = 0
-      const list = AbnormalService.getWarningList('AIoT', true, true)
-      this.dataList=list
-      this.rootId=list[0].bindId
-      this.topList = list.map(e => {
-        return {
-          value1: ++i,
-          value2: e.bindId,
-          value3: e.typeEnum.name,
-          progress: e.abnormalProbability,
-          progressColor: 'red'
-        }
+      const v=this.entity
+      console.log('root change ',v)
+      this.overview=getListNextVFunc(v.nodeJson.overview)
+      this.monitor=v.nodeJson.monitor
+      this.rootId=v.id
+      AbnormalApi.abnormalInfo({
+        nodeType:'aiot'
+      }).then(res=>{
+        let i=0
+        const topList = res.root
+          .map(e => {
+            e.typeEnum=JSON.parse(e.typeEnum)
+            return {
+              value1: ++i,
+              value2: e.bindId,
+              value3: e.typeEnum.name,
+              progress: e.abnormalProbability,
+              progressColor: 'red'
+            }
+          })
+        topList.sort((a, b)=>b.progress-a.progress)
+        this.topList=topList
       })
+
     }
   },
   destroyed() {

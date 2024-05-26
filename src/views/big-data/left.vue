@@ -2,35 +2,51 @@
   <div class="main-board left">
     <div class="line line_top"></div>
     <div class="line line_bottom"></div>
-    <main-title title="Spark节点资源总览">
-      <m-horizontal-tab class="left-overview-tab"
-                        :tab-value="[{title:'全部设备',value:null},{title:'接入平台设备',value:1},]"
-      />
+    <main-title title="节点资源总览">
     </main-title>
     <div class="project-view">
       <img class="icon" src="@/assets/main/icon_project.png" alt=""/>
       <span class="label">全部节点</span>
       <div class="number-view">
-        <span class="number number-font">{{ objectOverview.num }}</span>
+        <span class="number number-font">{{ nodeResources() }}</span>
         <span class="unit">个</span>
         <div class="border"></div>
       </div>
     </div>
     <div class="carousel-view">
       <el-carousel trigger="click" :interval=5000 height="168px" arrow="never">
+        <!--        <el-carousel-item key="inner_01">-->
+        <!--          <div class="carousel-item-inner inner_01">-->
+        <!--            <div class="inner_01-item pointer">-->
+        <!--              <icon-number label="未开工" :value="objectOverview.wkgnum" icon="wkg"/>-->
+        <!--            </div>-->
+        <!--            <div class="inner_01-item pointer">-->
+        <!--              <icon-number label="已开工" :value="objectOverview.zjnum" icon="ykg"/>-->
+        <!--            </div>-->
+        <!--            <div class="inner_01-item pointer">-->
+        <!--              <icon-number label="完工" :value="objectOverview.wgnum" icon="wg"/>-->
+        <!--            </div>-->
+        <!--            <div class="inner_01-item pointer">-->
+        <!--              <icon-number label="停工" :value="objectOverview.tgnum" icon="tg"/>-->
+        <!--            </div>-->
+        <!--            <div class="inner_01-item pointer">-->
+        <!--              <icon-number label="竣工" :value="objectOverview.jgnum" icon="jg"/>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </el-carousel-item>-->
         <el-carousel-item key="inner_02">
           <div class="carousel-item-inner inner_02">
             <div class="inner_02-item">
-              <card-number label="节点内存比" :value="objectOverview.num" unit="个"/>
+              <card-number label="节点内存比" :value="nodeResources()" unit="个"/>
             </div>
             <div class="inner_02-item">
-              <card-number label="内存使用率" :value="48.9" unit="%"/>
+              <card-number label="内存使用率" :value="nodeResources()" unit="%"/>
             </div>
             <div class="inner_02-item">
-              <card-number label="内存请求率" :value="75.7" unit="%"/>
+              <card-number label="内存请求率" :value="nodeResources()" unit="%"/>
             </div>
             <div class="inner_02-item">
-              <card-number label="内存限制率" :value="133.0" unit="%" style-class="red"/>
+              <card-number label="内存限制率" :value="nodeResources()" unit="%" style-class="red"/>
             </div>
           </div>
         </el-carousel-item>
@@ -38,21 +54,21 @@
     </div>
 
     <div class="project-moni-view flex-flat">
-      <icon-number label="CPU使用率" :value="8.1" unit="%" icon="zc"/>
-      <icon-number label="CPU请求率" :value="60.9" unit="%" icon="tq"/>
-      <icon-number label="CPU限制率" :value="178.9" unit="%" icon="zh" />
+      <icon-number label="CPU使用率" :value="nodeResources()" unit="%" icon="zc"/>
+      <icon-number label="CPU请求率" :value="nodeResources()" unit="%" icon="tq"/>
+      <icon-number label="CPU限制率" :value="nodeResources()" unit="%" icon="zh" />
     </div>
     <div class="project-moni-view flex-flat">
-      <icon-number label="节点数" :value="6"  icon="zc"/>
-      <icon-number label="Pod数" :value="119" icon="tq"/>
-      <icon-number label="上限Pod" :value="660" icon="zh" />
+      <icon-number label="节点数"  :value="nodeResources()"  icon="zc"/>
+      <icon-number label="Pod数"   :value="nodeResources()" icon="tq"/>
+      <icon-number label="上限Pod" :value="nodeResources()" icon="zh" />
     </div>
     <div class="project-moni-view flex-flat">
-      <icon-number label="总内存" :value="61.3" unit="GiB" icon="wlldf"/>
-      <icon-number label="使用量" :value="29.9" unit="GiB" icon="wlldf"/>
-      <icon-number label="请求量" :value="46.4" unit="GiB" icon="wlldf"/>
+      <icon-number label="总内存" :value="nodeResources()" unit="GiB" icon="wlldf"/>
+      <icon-number label="使用量" :value="nodeResources()" unit="GiB" icon="wlldf"/>
+      <icon-number label="请求量" :value="nodeResources()" unit="GiB" icon="wlldf"/>
     </div>
-    <main-title title="Spark异常信息明细"></main-title>
+    <main-title title="节点信息明细"></main-title>
     <div class="start-project-view">
       <main-left-chart2/>
     </div>
@@ -65,17 +81,17 @@ import IconNumber from '@/components/IconNumber'
 import CenterNav from '@/components/CenterNav'
 import CardNumber from '@/components/CardNumber'
 import MHorizontalTab from '@/components/MHorizontalTab'
-import MainApi from '@/api/main'
-import { format_progress_status } from '@/filters'
 import LiquidNumber from '@/components/LiquidNumber'
 import DualShowView from '@/components/DualShowView'
 import RelationshipGraphService from '@/moke/service/RelationshipGraphService'
 import MainLeftChart1 from '@/views/main/components/main-left-chart1.vue'
 import MainLeftChart2 from '@/views/main/components/main-left-chart2.vue'
 import CityImageBlock from '@/components/CityImageBlock/index.vue'
+import HomeApi from '@/api/home'
+import { getListNextVFunc } from '@/utils/gyy-utils'
 
 export default {
-  name: 'BigDataLeft',
+  name: 'MainLeft',
   components: {
     CityImageBlock,
     MainLeftChart2,
@@ -90,24 +106,19 @@ export default {
   },
   data() {
     return {
-      objectOverview: {
-        num: 56,
-      },
-      constructionProgress: {},
-      liveShowObj: {},
-      investOverview: {},
-      liveShow: 1
+      nodeResources:()=>{}
     }
   },
   created() {
-    this.initMap()
+    this.init()
   },
   mounted() {
   },
   methods: {
-    initMap() {
-      this.$store.dispatch('relationshipChartData/updateNodeList', RelationshipGraphService.getNodeList())
-      this.$store.dispatch('relationshipChartData/updateEdgeList', RelationshipGraphService.getEdgeList())
+    init(){
+      HomeApi.getNodeResources().then(res=>{
+        this.nodeResources = getListNextVFunc(res.root)
+      })
     }
   },
   filters: {}

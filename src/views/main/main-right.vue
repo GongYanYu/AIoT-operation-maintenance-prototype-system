@@ -3,39 +3,34 @@
     <div class="line line_top"></div>
     <div class="line line_bottom"></div>
     <main-title title="综合设备问题总览">
-        <span>
-          <m-horizontal-tab :tab-value="[{title:'本月',value:'month'},{title:'累计',value:null},]" default="1"
-                            class="tab-right1"
-          />
-        </span>
     </main-title>
     <div class="right-icon-view">
-      <div class="ri-item" :class="{'ri-selected':riSelectedWl}">
-        <icon-number label="预警问题" :value="113" icon="wlgz"/>
+      <div class="ri-item">
+        <icon-number label="预警问题" :value="equipmentIssues()" icon="wlgz"/>
       </div>
       <div class="ri-item" :class="{'ri-selected':!riSelectedWl}">
-        <icon-number label="人工巡检问题" :value="47" icon="rgxj"/>
+        <icon-number label="人工巡检问题" :value="equipmentIssues()" icon="rgxj"/>
       </div>
     </div>
     <div class="project-ques-view">
       <div class="pq-item">
         <span class="pq-item-top">A级问题</span>
         <div class="pq-item-btm">
-          <span class="pqib_num level_a">{{ questionNumTotal.a }}</span>
+          <span class="pqib_num level_a">{{ equipmentIssues() }}</span>
           <span class="pqib_unit">个</span>
         </div>
       </div>
       <div class="pq-item">
         <span class="pq-item-top">B级问题</span>
         <div class="pq-item-btm">
-          <span class="pqib_num level_b">{{ questionNumTotal.b }}</span>
+          <span class="pqib_num level_b">{{ equipmentIssues()}}</span>
           <span class="pqib_unit">个</span>
         </div>
       </div>
       <div class="pq-item">
         <span class="pq-item-top">C级问题</span>
         <div class="pq-item-btm">
-          <span class="pqib_num level_c">{{ questionNumTotal.c }}</span>
+          <span class="pqib_num level_c">{{ equipmentIssues() }}</span>
           <span class="pqib_unit">个</span>
         </div>
       </div>
@@ -44,10 +39,7 @@
     <div class="right-chart-view">
       <hot-word-chart :word-data="hotWordData"/>
     </div>
-    <main-title title="综合预警问题明细">
-      <m-horizontal-tab :tab-value="[{title:'今日',value:'day'},{title:'本周',value:'week'},
-      {title:'本月',value:'month'}]" default="2" class="tab-right2"
-      />
+    <main-title title="综合预警问题明细(近一年)">
     </main-title>
     <div class="right-table-view">
       <question-custom-list  />
@@ -60,8 +52,9 @@ import IconNumber from '@/components/IconNumber'
 import MHorizontalTab from '@/components/MHorizontalTab'
 import HotWordChart from '@/components/HotWordChart'
 import MainTitle from '@/components/MainTitle'
-import MainApi from '@/api/main'
 import QuestionCustomList from '@/components/QuestionCustomList/index.vue'
+import HomeApi from '@/api/home'
+import { getListNextVFunc } from '@/utils/gyy-utils'
 
 export default {
   name: 'MainRight',
@@ -74,37 +67,9 @@ export default {
   },
   data() {
     return {
-      //地区代码
-      regionCode: null,
-      chooseEntity: {},
+      equipmentIssues:()=>{},
       //113
-      hotWordData: [
-        {
-          name: 'Shuffle失败',
-          value: 31,
-          searchObj: { type: '1' }
-        },
-        {
-          name: '任务超时',
-          value: 42,
-          searchObj: { type: '1' }
-        },
-        {
-          name: '资源竞争',
-          value: 12,
-          searchObj: { type: '1' }
-        },
-        {
-          name: '内存不足',
-          value: 4,
-          searchObj: { type: '1' }
-        },
-        {
-          name: '任务失败',
-          value: 113-31-42-12-4,
-          searchObj: { type: '1' }
-        }
-      ],
+      hotWordData: [],
       warningList: [],
       isMonth: true,
       questionNumTotal: { a: 42, b: 23, c: 113 - 42 - 23 },
@@ -119,10 +84,22 @@ export default {
     }
   },
   created() {
+    this.init()
   },
   mounted() {
   },
-  methods: {}
+  methods: {
+
+    init(){
+      HomeApi.highFrequencyWarningIssues().then(res=>{
+        this.hotWordData =res.root
+      })
+
+      HomeApi.comprehensiveEquipmentIssues().then(res=>{
+        this.equipmentIssues = getListNextVFunc(res.root)
+      })
+    }
+  }
 }
 </script>
 

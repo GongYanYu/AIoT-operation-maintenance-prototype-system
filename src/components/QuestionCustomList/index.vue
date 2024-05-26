@@ -1,6 +1,6 @@
 <template>
   <div class="qc-main"
-       v-loading="isLoading===2"
+       v-loading="isLoading"
        element-loading-text="拼命加载中"
        element-loading-spinner="el-icon-loading"
        element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -69,6 +69,8 @@ import AbnormalService from '@/moke/service/AbnormalService'
 import AbnormalTypeEnum from '@/moke/entity/AbnormalTypeEnum'
 import { format_warning_process_state } from '@/filters'
 import AbnormalInfo from '@/moke/data/AbnormalInfo'
+import { copyValue } from '@/moke/run'
+import AbnormalApi from '@/api/abnormal'
 
 export default {
   name: 'QuestionCustomList',
@@ -84,10 +86,10 @@ export default {
       scrollMut: null,
       indexFocused: -1,
       questionTabValue: [
-        { title: '全部', subtitle: '113个', value: null },
-        { title: '处理中', subtitle: '65个', value: 0 },
-        { title: '审核中', subtitle: '32个', value: 2 },
-        { title: '已完成', subtitle: '70个', value: 1 }
+        { title: '全部', subtitle: '0', value: null },
+        { title: '处理中', subtitle: '0', value: 0 },
+        { title: '审核中', subtitle: '0', value: 2 },
+        { title: '已完成', subtitle: '0', value: 1 }
       ],
       searchObjT: {},
       // c:0 b:1 a:2
@@ -100,7 +102,8 @@ export default {
       page: {
         pageStart: 0,
         pageSize: 100
-      }
+      },
+      process:''
     }
   },
   computed: {
@@ -116,45 +119,65 @@ export default {
       type: Object,
       default: () => {
         return {
+          //aiot bigData
           type: 'all'
         }
       }
     },
-    //px
     cellHeight: {
       type: Number,
       default: 84
-    }
+    },
   },
   watch: {
     searchObj: {
       deep: true,
       immediate: true,
       handler(newValue, _) {
-        this.initData(newValue.type)
+        this.initData()
       }
     }
   },
   methods: {
     getImg(item) {
-      return require(`./Icon/${Math.ceil(item.createTime % 10)}.png`)
+      return require(`./Icon/default.svg`)
     },
     changeTab(item) {
+      this.process=item.value
+      this.initData()
     },
-    initData(range) {
-      this.tableData = AbnormalService.getWarningList(range).map(item => {
-        item.info = AbnormalTypeEnum[item.type]
-        return item
+    initData() {
+      this.isLoading=true
+      AbnormalApi.abnormalInfo({
+        nodeType:this.searchObj.type,
+        process:this.process,
+      }).then(res=>{
+        this.isLoading=false
+        const questionTabValue = [
+          { title: '全部', subtitle: 0, value: '' },
+          { title: '处理中', subtitle: 0, value: 0 },
+          { title: '审核中', subtitle: 0, value: 1 },
+          { title: '已完成', subtitle: 0, value: 2 }
+        ]
+        this.tableData =res.root.map(item => {
+          questionTabValue[item.process+1].subtitle++
+          item.info = AbnormalTypeEnum[item.type]
+          return item
+        })
+        questionTabValue[0].subtitle=this.tableData.length
+        if (this.process===''){
+          this.questionTabValue=questionTabValue
+        }
       })
-      const data = AbnormalInfo.abnormalStatistics[range]
-      const get=(x)=>data[x]+'个'
+      // this.tableData = AbnormalService.getWarningList(range).map(item => {
+      //   item.info = AbnormalTypeEnum[item.type]
+      //   return item
+      // })
+      // const data = AbnormalInfo.abnormalStatistics[range]
+      // const get=(x)=>data[x]+'个'
 
-      this.questionTabValue = [
-        { title: '全部', subtitle: get('all'), value: null },
-        { title: '处理中', subtitle: get('processing'), value: 0 },
-        { title: '审核中', subtitle: get('unprocessed'), value: 2 },
-        { title: '已完成', subtitle: get('processed'), value: 1 }
-      ]
+
+      //copyValue(this.tableData,false)
     }
   }
 }

@@ -7,15 +7,14 @@ import resize from '@/mixins/resize-chart'
 import styles from '@/styles/global.scss'
 import moment from 'moment'
 import { StandardValue } from '@/api/standard-value'
+import AbnormalApi from '@/api/abnormal'
 
 export default {
   name: 'PointChart',
   props: {
     showData: {
-      type: Array,
-      default: () => {
-        return []
-      }
+      type: String,
+      default: ''
     }
   },
   mixins: [resize],
@@ -44,7 +43,7 @@ export default {
       //正常 在正常概率序列前15内
       return 0
     },
-    renderChart() {
+    async renderChart() {
       let dataList = this.showData
       const getGrade=this.getGrade
       if (!dataList) {
@@ -67,7 +66,6 @@ export default {
 
       const yNames = ['历史T1', '历史T2', '历史T3', '历史T4', '历史T5', '历史T6', '历史T7', '历史T8', '本次']
       const xNames = []
-      const data = []
 
       function getRandomNum() {
         return Math.floor(Math.random() * 100)
@@ -76,14 +74,19 @@ export default {
       for (let i = 0; i < dataList.length; i++) {
         const e = dataList[i]
         xNames.push(e.warningTime)
-        for (let j = 0; j < yNames.length; j++) {
-          if (j < yNames.length - 1) {
-            data.push([i, j, getRandomNum()])
-          } else {
-            data.push([i, j, getRandomNum()+50])
-          }
-        }
+        // for (let j = 0; j < yNames.length; j++) {
+        //   if (j < yNames.length - 1) {
+        //     data.push([i, j, getRandomNum()])
+        //   } else {
+        //     data.push([i, j, getRandomNum()+50])
+        //   }
+        // }
       }
+
+      const res =await AbnormalApi.getPredictData({nodeId:this.showData})
+
+      const data =JSON.parse(res.object)
+
       const textList=['正常','疑似','异常']
       const option = {
         tooltip: {

@@ -12,6 +12,7 @@ import resize from '@/mixins/resize-chart'
 import RelationshipGraphService from '@/moke/service/RelationshipGraphService'
 import NodeStatusEnum from '@/moke/entity/NodeStatusEnum'
 import AbnormalInfoDialog from '@/components/RelationshipChart/components/AbnormalInfoDialog.vue'
+import HomeApi from '@/api/home'
 
 //https://www.makeapie.cn/echarts_content/xByJm_ypsl.html
 export default {
@@ -133,7 +134,7 @@ export default {
         const data=params.data
         console.log(data)
         //是否是node
-        if (data&&data.id&&data.nodeStatus.name!==NodeStatusEnum['1'].name){
+        if (data&&data.id&&data.category==='异常'){
           this.isDialogShow=true
           this.entity=data
         }

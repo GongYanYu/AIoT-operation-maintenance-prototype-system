@@ -18,4 +18,15 @@ export function getPreviousLastMonths(size=12,formatStr='yyyy-MM') {
   return res.reverse();
 }
 
+export function getListNextVFunc(list){
+  let i=-1
+
+  return function() {
+    let v= list[++i]
+    if (i>=list.length-1)
+      i=-1
+    return v
+  }
+}
+
 

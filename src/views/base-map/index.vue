@@ -90,6 +90,7 @@ import AIoTLeft from '@/views/aiot/left.vue'
 import AIoTRight from '@/views/aiot/right.vue'
 import BigDataLeft from '@/views/big-data/left.vue'
 import BigDataRight from '@/views/big-data/right.vue'
+import HomeApi from '@/api/home'
 
 export default {
   name: 'index',
@@ -127,16 +128,43 @@ export default {
     }
   },
   watch: {},
+  created(){
+    this.initMap()
+  },
   mounted() {
   },
   methods: {
-    emitOrder(obj) {
-      switch (obj.showWhatView) {
-        case 3:
-          this.$refs.constructionRight.handleOrder(obj)
-          break
+
+    initMap() {
+      const data={
+        "overview":[
+          1.5,90.1,
+          8,5.5,
+          64,24,
+          8,80.9,
+        ],
+        "monitor":[220,32,0,657,628,50]
       }
+      function toObj(str) {
+        if (str&&typeof str === 'string'){
+          return JSON.parse(str)
+        }
+        return str
+      }
+      HomeApi.getNodeList().then(res=>{
+        const node=res.root
+        node.forEach(e=>{
+          e.nodeStatus=toObj(e.nodeStatus)
+          e.nodeJson=toObj(e.nodeJson)
+        })
+        this.$store.dispatch('relationshipChartData/updateNodeList', node)
+      })
+      HomeApi.getEdgeList().then(res=>{
+        const data=res.root
+        this.$store.dispatch('relationshipChartData/updateEdgeList', data)
+      })
     },
+
     //注意一定是要 等待地图装配好在运行
     handleRegionChange(regionCode, isChangeMap = true) {
       this.regionCode = regionCode
@@ -187,9 +215,6 @@ export default {
         }
       })
     },
-    siteDetailLeft3TabChange(obj) {
-      this.$refs.siteDetailRight3.tabChange(obj)
-    }
   },
   destroyed() {
   }
@@ -245,7 +270,6 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  user-select: none;
   background-color: #141819;
 
   .main-51world {

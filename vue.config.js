@@ -39,7 +39,7 @@ module.exports = {
     },
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target:`https://jgpt.yazhou-bay.com/bsapi`,  //服务器
+        target:`http://localhost:8080`,  //服务器
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

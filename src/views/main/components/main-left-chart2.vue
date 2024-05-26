@@ -12,6 +12,7 @@
 <script>
 import * as echarts from 'echarts'
 import { getPreviousLastMonths } from '@/utils/gyy-utils'
+import HomeApi from '@/api/home'
 
 export default {
   name: "main-left-chart2",
@@ -27,10 +28,12 @@ export default {
     this.initChart()
   },
   methods: {
-    initChart() {
-      const gzData = [12.6, 25.9, 9.0, 62.4, 28.7, 70.7, 45.6, 82.2, 48.7, 18.8, 26.0, 22.3];
-      const bjData = [13.9, 15.9, 11.1, 18.27, 48.3, 69.2, 31.6, 46.6, 55.4, 28.4, 20.23, 10.7];
-      const XData = getPreviousLastMonths(12);
+    async initChart() {
+      const {object} = await HomeApi.abnormalQuantityStatistics()
+      // const gzData = [12.6, 25.9, 9.0, 62.4, 28.7, 70.7, 45.6, 82.2, 48.7, 18.8, 26.0, 22.3];
+      // const bjData = [13.9, 15.9, 11.1, 18.27, 48.3, 69.2, 31.6, 46.6, 55.4, 28.4, 20.23, 10.7];
+      // const XData = getPreviousLastMonths(12);
+      const {gzData,bjData,XData}=object
       //获取当前时间的前1年所有月份
 
       for (let i = 0; i < bjData.length; i++) {

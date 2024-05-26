@@ -3,12 +3,6 @@
     <div class="line line_top"></div>
     <div class="line line_bottom"></div>
     <main-title title="纺织安全问题总览">
-                <span>
-                  <m-horizontal-tab
-                    class="left-overview-tab"
-                    :tab-value="tabValue" default="2"
-                  />
-                </span>
     </main-title>
 
     <div class="project-ques-view">
@@ -61,6 +55,8 @@ import EnvironmentApi from '@/api/environment'
 import NormalPieChart from '@/components/NormalPieChart'
 import NormalLineChart from '@/views/aiot/components/NormalLineChart/index.vue'
 import NotifySetting from '@/components/NotifySetting/index.vue'
+import AbnormalApi from '@/api/abnormal'
+import { getListNextVFunc } from '@/utils/gyy-utils'
 
 export default {
   name: 'ConstructionLeft',
@@ -86,12 +82,12 @@ export default {
       tranceDataList: [],
       topListTabValue: null,
       checked: -1,
-      conAnalysisData: { projectNum: '14', recordNum: '113', percent: '97' },
+      conAnalysisData: { projectNum: '0', recordNum: '0', percent: '0' },
       pieChartData: [
-        { value: 15, name: '处理中' },
-        { value: 95, name: '已处理' },
-        { value: 3, name: '未处理' },
-        { value: 113, name: '预警数' }
+        { value: 0, name: '处理中' },
+        { value: 0, name: '已处理' },
+        { value: 0, name: '未处理' },
+        { value: 0, name: '预警数' }
       ],
       isShowOverEnvListDialog: false,
       region: null,
@@ -99,8 +95,22 @@ export default {
     }
   },
   mounted() {
+    this.init()
   },
-  methods: {}
+  methods: {
+    init(){
+      AbnormalApi.safetyProblem().then(res=>{
+        const func=getListNextVFunc(res.root)
+        this.conAnalysisData = { projectNum: func(), recordNum: func(), percent:  func()}
+        this.pieChartData=[
+          { value: func(), name: '处理中' },
+          { value: func(), name: '已处理' },
+          { value: func(), name: '未处理' },
+          { value: this.conAnalysisData.recordNum, name: '预警数' }
+        ]
+      })
+    }
+  }
 }
 </script>
 

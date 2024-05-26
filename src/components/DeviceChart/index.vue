@@ -28,7 +28,7 @@ export default {
     }
   },
   watch: {
-    showData(newV, _) {
+    showData() {
       this.renderChart()
     }
   },
@@ -36,15 +36,19 @@ export default {
     renderChart() {
       const myChart = this.chart
       var highlight = '#00b79e';
-
-      var demoData = [
-        { name: '设备1', value: 220, unit: '', pos: ['16.6%', '25%'], range: [0, 400] },
+      let i=0
+      var demo = [
+        {pos: ['16.6%', '25%'] },
         { name: '设备2', value: 32, unit: '', pos: ['49.8%', '25%'], range: [0, 60] },
         { name: '设备3', value: 0.9, pos: ['83%', '25%'], range: [0.1, 1.0], splitNum: 9 },
         { name: '设备4', value: 6.34, unit: '', pos: ['16.6%', '75%'], range: [0, 50] },
         { name: '设备5', value: 6.28, unit: '', pos: ['49.8%', '75%'], range: [0, 50] },
         { name: '设备6', value: 50, unit: '', pos: ['83%', '75%'], range: [0, 100] }
       ];
+      const demoData=this.showData.map(e=>({
+        name: '设备'+(i+1), value: e, unit: '', pos: demo[i++].pos, range: [0, 1000]
+      }))
+
 
       const option = {
         series: (function() {

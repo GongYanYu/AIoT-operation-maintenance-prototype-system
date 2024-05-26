@@ -3,37 +3,31 @@
     <div class="line line_top"></div>
     <div class="line line_bottom"></div>
     <main-title title="Spark大数据作业监控">
-        <span>
-          <m-horizontal-tab :tab-value="timeTabValue" default="2"
-                            class="tab-right1" @changeTab="overviewTabChange"
-          />
-        </span>
     </main-title>
 
     <div class="project-view pointer">
       <div class="label color-a" :class="{'label-selected':showWhatOverview==='a'}"
-           @click="showWhatOverviewChange('a')"
       >作业统计
       </div>
     </div>
-    <div class="con-num-main" @click="showOvertimeDialog($event)">
+    <div class="con-num-main" >
       <div v-if="showWhatOverview==='a'" class="a-main">
         <icon-number icon="td" class="cell"
-                     label="平均作业执行时间" :value="86" unit="s"/>
+                     label="平均作业执行时间" :value="dataOverview()" unit="s"/>
         <icon-number icon="sjk" class="cell"
-                     label="最长作业执行时间" :value="297" unit="s"/>
+                     label="最长作业执行时间" :value="dataOverview()" unit="s"/>
         <icon-number icon="sjj" class="cell"
-                     label="作业执行时间方差" :value="199" unit="%"/>
+                     label="作业执行时间方差" :value="dataOverview()" unit="%"/>
         <icon-number icon="xlpt" class="cell"
-                     label="任务成功率" :value="97" unit="%"/>
+                     label="任务成功率" :value="dataOverview()" unit="%"/>
         <icon-number icon="gzm" class="cell"
-                     label="任务失败率" :value="3" unit="%"/>
+                     label="任务失败率" :value="dataOverview()" unit="%"/>
         <icon-number icon="dtjhnt" class="cell"
-                     label="Shuffle时间" :value="32" unit="s"/>
+                     label="Shuffle时间" :value="dataOverview()" unit="s"/>
       </div>
     </div>
 
-    <main-title title="Spark问题明细">
+    <main-title title="Spark问题明细(近一年)">
       <!--      <m-horizontal-tab :tab-value="timeTabValue"-->
       <!--                        class="tab-right1" @changeTab="questionTargetObjectsChange"-->
       <!--      />-->
@@ -51,6 +45,8 @@ import MainTitle from '@/components/MainTitle'
 import NormalPieChart from '@/components/NormalPieChart'
 import ConstructionApi from '@/api/construction'
 import QuestionCustomList from '@/components/QuestionCustomList/index.vue'
+import HomeApi from '@/api/home'
+import { getListNextVFunc } from '@/utils/gyy-utils'
 
 export default {
   name: 'BigDataRight',
@@ -73,23 +69,7 @@ export default {
       //预警级别 2:A级 1:B级 0:C级
       queryOverview: { warningLevel: 2, dateType: null },
       //t+warning_content_type
-      dataOverview: {
-        t3: 0,
-        t21: 0,
-        t19: 0,
-        t20: 0,
-        t32: 0,
-        t17: 0,
-        t33: 0,
-        t22: 0,
-        t5: 0,
-        t8: 0,
-        t6: 0,
-        t9: 0,
-        t7: 0,
-        t10: 0,
-        t61: 0
-      },
+      dataOverview: ()=>{},
       isShowOvertimeListDialog: false,
       queryObj: {},
       region: null
@@ -97,65 +77,16 @@ export default {
     }
   },
   created() {
+    this.init()
   },
   mounted() {
     //this.handleRegionChange(null)
   },
   methods: {
-    handleRegionChange(region) {
-      this.region = region
-      this.overviewTabChange({ value: this.queryOverview.dateType })
-      // this.questionTargetObjectsChange({ value: this.questionDateValue })
-    },
-    handleOrder(obj) {
-      if (obj.order === 'quesSearchObj') {
-        this.$set(this.queryObj, 'warningLevel', obj.data)
-      }
-    },
-    showWhatOverviewChange(level) {
-      this.showWhatOverview = level
-      this.queryOverview.warningLevel = level === 'a' ? 2 : level === 'b' ? 1 : 0
-      this.handleOrder({ order: 'quesSearchObj', data: this.queryOverview.warningLevel })
-      // this.$emit("emitOrder", { showWhatView:3, order:'quesSearchObj',data: this.queryOverview.warningLevel })
-      this.overviewTabChange({ value: this.queryOverview.dateType })
-    },
-    overviewTabChange(item) {
-      this.queryOverview.dateType = item.value
-      ConstructionApi.safeOverview({ ...this.queryOverview, region: this.region })
-        .then((res) => {
-          if (res.success) {
-            this.dataOverview = {
-              t3: 0, t21: 0, t19: 0, t20: 0, t32: 0, t17: 0, t33: 0,
-              t22: 0, t5: 0, t8: 0, t6: 0, t9: 0, t7: 0, t10: 0, t61: 0
-            }
-            res.data.forEach(e => {
-              this.$set(this.dataOverview, 't' + e.index_type, e.num)
-            })
-
-          } else {
-            console.log('safeOverview api error!')
-          }
-        })
-      //问题明细
-      this.queryObj = {
-        ...this.queryOverview,
-        warnigType: 0,
-        regionCode: this.region
-      }
-    },
-    entranceSite(id, data) {
-      this.$emit('entranceSite', id, data)
-    },
-    showOvertimeDialog(e) {
-      if (!e.target.dataset.obj) {
-        return
-      }
-      this.chooseEntity = {
-        ...JSON.parse(e.target.dataset.obj),
-        dateType: this.queryOverview.dateType,
-        region: this.region
-      }
-      this.isShowOvertimeListDialog = true
+    init(){
+      HomeApi.bigDataMonitoring().then(res=>{
+        this.dataOverview = getListNextVFunc(res.root)
+      })
     }
   }
 }

@@ -11,6 +11,7 @@
 import resize from '@/mixins/resize-chart'
 import styles from '@/styles/global.scss'
 import { deepClone } from '@/utils'
+import AbnormalApi from '@/api/abnormal'
 
 export default {
   name: 'NormalLineChart',
@@ -171,51 +172,9 @@ export default {
       this.chartObj.setOption(this.option)
     },
     doSearch(){
-      const data=[
-        {
-          "date": "2023-08",
-          "projectNum": 3,
-          "ANum": 0,
-          "BNum": 0,
-          "CNum": 3
-        },
-        {
-          "date": "2023-09",
-          "projectNum": 1,
-          "ANum": 0,
-          "BNum": 0,
-          "CNum": 1
-        },
-        {
-          "date": "2023-10",
-          "projectNum": 1,
-          "ANum": 0,
-          "BNum": 0,
-          "CNum": 1
-        },
-        {
-          "date": "2023-11",
-          "projectNum": 3,
-          "ANum": 0,
-          "BNum": 0,
-          "CNum": 3
-        },
-        {
-          "date": "2023-12",
-          "projectNum": 2,
-          "ANum": 0,
-          "BNum": 0,
-          "CNum": 2
-        },
-        {
-          "date": "2024-01",
-          "projectNum": 2,
-          "ANum": 0,
-          "BNum": 0,
-          "CNum": 2
-        }
-      ].reverse()
-      this.renderChart(data)
+      AbnormalApi.securityWarningTrends().then(res=>{
+        this.renderChart(res.root)
+      })
     },
     getSeries(type, data) {
       let series = deepClone(this.series)
