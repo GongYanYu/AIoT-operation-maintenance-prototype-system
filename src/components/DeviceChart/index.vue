@@ -45,6 +45,7 @@ export default {
         { name: '设备5', value: 6.28, unit: '', pos: ['49.8%', '75%'], range: [0, 50] },
         { name: '设备6', value: 50, unit: '', pos: ['83%', '75%'], range: [0, 100] }
       ];
+      console.log('-DeviceChart--',this.showData)
       const demoData=this.showData.map(e=>({
         name: '设备'+(i+1), value: e, unit: '', pos: demo[i++].pos, range: [0, 1000]
       }))

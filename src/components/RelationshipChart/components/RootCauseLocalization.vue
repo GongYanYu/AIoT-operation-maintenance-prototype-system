@@ -111,7 +111,7 @@ export default {
     }
   },
   watch: {
-    isVisible:{
+    entity:{
       handler(v) {
         v&&this.initData()
       },
