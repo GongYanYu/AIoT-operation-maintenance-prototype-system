@@ -3,7 +3,7 @@ export function getApiBaseUrl() {
     return process.env.VUE_APP_BASE_API
   } else {
     //正式部署的请求跟路径
-    return 'http://localhost:8080'
+    return 'http://localhost:8080/AIoT-back-system'
   }
 }
 
