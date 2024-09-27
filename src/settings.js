@@ -13,7 +13,7 @@ module.exports = {
     // 打包时的基本配置，打包时改一下
     build: {
       publicPath: './',
-      outputDir: '../build/system-manage',
+      outputDir: './build/system-manage',
       assetsDir: 'static',
       css: {
         loaderOptions: {
